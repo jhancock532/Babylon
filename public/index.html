@@ -3,7 +3,43 @@
     <head>
         <meta charset="UTF-8">
         <title>Library of Babel</title>
+        <style>
+          body {
+            background-color: black;
+          }
+          #main-menu {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            color: white;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+          }
+
+          #fps {
+            position: absolute;
+            background-color: black;
+            border: 2px solid red;
+            text-align: center;
+            font-size: 16px;
+            color: white;
+            top: 15px;
+            right: 10px;
+            width: 60px;
+            height: 20px;
+            z-index: 1000;
+            }
+        </style>
     </head>
     <body>
+      <div id="fps">0</div>
+      <div id="main-menu">
+        <h1>The Library of Babel</h1>
+        <button id="start-button">Explore the Library</button>
+      </div>
     </body>
 </html>
