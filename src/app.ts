@@ -27,18 +27,15 @@ class App {
       // DOM set up
       this._canvas = this._createCanvas();
       this._setUpHTMLButtons();
-      
-
 
       // initialize babylon scene and engine
       this._engine = new Engine(this._canvas, true);
       this._scene = new Scene(this._engine);
 
       // hide/show the Inspector
-      
       window.addEventListener("keydown", (ev) => {
-          // Shift+Ctrl+Alt+I
-          if (ev.shiftKey && ev.ctrlKey && ev.altKey && ev.keyCode === 73) {
+          // Shift+Ctrl
+          if (ev.shiftKey && ev.ctrlKey) {
               if (this._scene.debugLayer.isVisible()) {
                   this._scene.debugLayer.hide();
               } else {
@@ -138,8 +135,6 @@ class App {
         let scene = new Scene(this._engine);
         this._libraryScene = scene;
 
-        
-
         scene.gravity = new Vector3(0, -0.15, 0);
         scene.collisionsEnabled = true;
     
@@ -216,7 +211,7 @@ class App {
         scene.clearColor = new Color4(0.01568627450980392, 0.01568627450980392, 0.20392156862745098); // a color that fit the overall color scheme better
 
         //Create the player
-        var camera = new FreeCamera("FreeCamera", new Vector3(0, 30, 14), scene);
+        var camera = new FreeCamera("FreeCamera", new Vector3(30, 20, 24), scene);
 
         // Targets the camera to a particular position. In this case the scene origin
         camera.setTarget(Vector3.Zero());
