@@ -1,9 +1,9 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, Vector3, HemisphericLight, Mesh, MeshBuilder, FreeCamera, Color4, StandardMaterial, Color3, PointLight, ShadowGenerator, Quaternion, Matrix, SceneLoader } from "@babylonjs/core";
-import { AdvancedDynamicTexture, Button, Control } from "@babylonjs/gui";
+import { Engine, Scene, Vector3, HemisphericLight, FreeCamera, Color4, Color3 } from "@babylonjs/core";
 import { Environment } from "./environment";
+import { Player } from "./characterController";
 
 enum State { MENU = 0, LIBRARY = 1, HTML = 2 }
 
@@ -12,6 +12,7 @@ class App {
     private _scene: Scene;
     private _canvas: HTMLCanvasElement;
     private _engine: Engine;
+    private _player: Player;
 
     //Game State Related
     public assets;
@@ -137,11 +138,16 @@ class App {
 
         scene.gravity = new Vector3(0, -0.15, 0);
         scene.collisionsEnabled = true;
+        scene.clearColor = new Color4(0, 0, 0);
+
+        this._player = new Player(scene, this._canvas);
     
-        //--CREATE ENVIRONMENT--
         const environment = new Environment(scene);
         this._environment = environment;
-        await this._environment.load(); //environment
+        await this._environment.load();
+
+        //playerMesh.intersectsMesh(this.scene.getMeshByName("playerMesh"))
+
         //await this._loadSceneAssets(scene);
     }
 
@@ -192,49 +198,17 @@ class App {
 
     private async _initializeGameAsync(scene): Promise<void> {
         //temporary light to light the entire scene
-        var light0 = new HemisphericLight("HemiLight", new Vector3(0, 1, 0), scene);
-
-        const light = new PointLight("sparklight", new Vector3(0, 0, 0), scene);
-        light.diffuse = new Color3(0.08627450980392157, 0.10980392156862745, 0.15294117647058825);
-        light.intensity = 35;
-        light.radius = 1;
-    
-        const shadowGenerator = new ShadowGenerator(1024, light);
-        shadowGenerator.darkness = 0.4;
+        var light = new HemisphericLight("HemiLight", new Vector3(0, 1, 0.2), scene);
+        light.diffuse = new Color3(0.8, 0.8, 0.8);
+        //light.specular = new Color3(1, 0, 0);
+        light.groundColor = new Color3(0, 0, 0);
+        light.intensity = 0.2;
     }
 
     private async _goToGame(){
         this._setUpGame();
 
         var scene = this._libraryScene;
-
-        scene.clearColor = new Color4(0.01568627450980392, 0.01568627450980392, 0.20392156862745098); // a color that fit the overall color scheme better
-
-        //Create the player
-        var camera = new FreeCamera("FreeCamera", new Vector3(30, 20, 24), scene);
-
-        // Targets the camera to a particular position. In this case the scene origin
-        camera.setTarget(Vector3.Zero());
-        camera.attachControl(this._canvas, true);
-        camera.applyGravity = true;
-        //camera.speed = 0.1;
-        camera.minZ = 0.01;
-
-        camera.inputs.addMouseWheel();
-
-        //Makes the camera fall even when not moving.
-        (<any>camera)._needMoveForGravity = true;
-
-        camera.ellipsoid = new Vector3(2, 5, 2);
-        camera.checkCollisions = true;
-
-        scene.collisionsEnabled = true;
-
-        //Add the WASD keys for camera controls
-        camera.keysUp.push(87);
-        camera.keysDown.push(83);
-        camera.keysLeft.push(65);
-        camera.keysRight.push(68);
 
         //primitive character and setting
         await this._initializeGameAsync(scene);
@@ -249,9 +223,7 @@ class App {
         this._engine.hideLoadingUI();
 
         //the game is ready, attach control back
-        scene.activeCamera = camera;
-        scene.activeCamera.attachControl(this._canvas, true);
-
+        
         //magic in case attaching control back doesn't work.
         //(<any>scene)._inputManager._onCanvasFocusObserver.callback();
     }
